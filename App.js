@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import Stacks from './src/screens/components/Stacks';
+import Stacks from './src/components/Stacks';
 
 export default function App() {
   return (

@@ -1,6 +1,7 @@
-import Login from '../Login';
+import Login from '../screens/Login';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Tabs from './Tabs';
+import Register from '../screens/Register';
 
 export default function Stacks() {
   const Stack = createNativeStackNavigator();
@@ -10,6 +11,15 @@ export default function Stacks() {
         <Stack.Screen
           name="Login"
           component={Login}
+          options={
+            {
+              headerShown: false,
+            }
+          }
+        />
+        <Stack.Screen
+          name="Register"
+          component={Register}
           options={
             {
               headerShown: false,

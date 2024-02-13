@@ -2,10 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react'
 import { SafeAreaView, StyleSheet, Text, TextInput, View, Pressable, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase-config'
 
-export default function Login() {
+export default function Register() {
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
 
@@ -13,21 +15,22 @@ export default function Login() {
 
     const nav = useNavigation()
 
-    const Login = async() => {
-        signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    const Register = () => {
+        console.log(email, password)
+        createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
             const user = userCredential.user;
-            if(user) {
+            if (user) {
                 nav.push('Main')
             }
         }).catch((error) => {
             const errorCode = error.code;
-            const errorMessage = error.message 
+            const errorMessage = error.message;
             console.log(errorMessage)
         })
     }
 
-    const toRegister = () => {
-        nav.push('Register')
+    const toLogin = () => {
+        nav.push('Login')
     }
 
     return (
@@ -40,6 +43,21 @@ export default function Login() {
                     </View>
 
                     <View style={mainContent}>
+                        <TextInput
+                            style={loginTextField}
+                            placeholder='First Name'
+                            value={firstName}
+                            onChangeText={setFirstName}
+                            imputMode="text"
+                        />
+                        <TextInput
+                            style={loginTextField}
+                            placeholder='Last Name'
+                            value={lastName}
+                            onChangeText={setLastName}
+                            imputMode="text"
+
+                        />
                         <TextInput
                             style={loginTextField}
                             placeholder='Email'
@@ -57,12 +75,11 @@ export default function Login() {
                         />
                     </View>
 
-                    <Pressable style={button} onPress={Login}>
-                        <Text style={text}>Login</Text>
+                    <Pressable style={button} onPress={Register}>
+                        <Text style={text}>Register</Text>
                     </Pressable>
-
-                    <Pressable style={button} onPress={toRegister}>
-                        <Text style={text}>Sign Up</Text>
+                    <Pressable style={button} onPress={toLogin}>
+                        <Text style={text}>Login</Text>
                     </Pressable>
                 </View>
             </SafeAreaView>

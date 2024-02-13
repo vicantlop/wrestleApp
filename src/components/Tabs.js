@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import CheckIn from '../CheckIn'
+import CheckIn from '../screens/CheckIn'
 
 
 const Tab = createBottomTabNavigator()
