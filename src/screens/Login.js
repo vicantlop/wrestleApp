@@ -2,20 +2,35 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react'
 import { SafeAreaView, StyleSheet, Text, TextInput, View, Pressable, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase-config'
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
+    // const [token, setToken] = useState(null)
 
     const { container, loginTextField, contentView, titleContainer, titleText, mainContent, button, text } = styles;
 
     const nav = useNavigation()
 
+    // useEffect(() => {
+    //     onAuthStateChanged(auth, (user) => {
+    //         console.log("user:" + user + '' + user?.email);
+    //         if(user) {
+    //             nav.push('Main')
+    //         }
+    //     })
+    // }, [])
+
+    console.log(auth)
+
     const Login = async() => {
         signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
             const user = userCredential.user;
+            console.log(user)
+            // storeData()
             if(user) {
                 nav.push('Main')
             }
@@ -24,11 +39,33 @@ export default function Login() {
             const errorMessage = error.message 
             console.log(errorMessage)
         })
-    }
+    } 
+
+    // const storeData = async () => {
+    //     try {
+    //         setToken('abc123')
+    //         await AsyncStorage.setItem('token', 'abc123')
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
+
+    // const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('token')
+    //         if(value !== null) {
+    //             setToken(value)
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
 
     const toRegister = () => {
         nav.push('Register')
     }
+
+    // console.log(token)
 
     return (
         <Pressable style={contentView} onPress={Keyboard.dismiss}>

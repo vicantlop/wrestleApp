@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import { SafeAreaView, StyleSheet, Text, TextInput, View, Pressable, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase-config'
+import { auth, db } from '../../firebase-config'
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function Register() {
     const [firstName, setFirstName] = useState('')
@@ -15,11 +16,22 @@ export default function Register() {
 
     const nav = useNavigation()
 
-    const Register = () => {
+    const Register = async () => {
         console.log(email, password)
-        createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+        createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
             const user = userCredential.user;
+            console.log(user.uid)
             if (user) {
+                console.log(firstName)
+                try {
+                    await setDoc(doc(db, 'users', user.uid), {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                    });
+                } catch (e) {
+                    console.log(e)
+                }
                 nav.push('Main')
             }
         }).catch((error) => {
@@ -27,6 +39,7 @@ export default function Register() {
             const errorMessage = error.message;
             console.log(errorMessage)
         })
+        
     }
 
     const toLogin = () => {
