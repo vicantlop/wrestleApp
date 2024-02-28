@@ -24,12 +24,9 @@ export default function Login() {
     //     })
     // }, [])
 
-    console.log(auth)
-
     const Login = async() => {
         signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
             const user = userCredential.user;
-            console.log(user)
             // storeData()
             if(user) {
                 nav.push('Main')

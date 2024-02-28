@@ -23,7 +23,7 @@ export default function Tabs() {
                 }
             }}
         >
-            <Tab.Screen name="checkIn" component={CheckIn} />
+            <Tab.Screen name="Check In" component={CheckIn} />
         </Tab.Navigator>
     )
 }
