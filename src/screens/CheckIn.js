@@ -16,16 +16,17 @@ export default function CheckIn() {
     const [attendance, setAttendance] = useState({})
 
     useEffect(() => {
-        const getAttendance = async () => {
-            try {
-                const docSnap = await getDoc(doc(db, 'attendance', user.uid))
-                setAttendance(docSnap.data())
-            } catch (error) {
-                console.log(error)
-            }   
-        }
         getAttendance()
     }, [])
+
+    const getAttendance = async () => {
+        try {
+            const docSnap = await getDoc(doc(db, 'attendance', user.uid))
+            setAttendance(docSnap.data())
+        } catch (error) {
+            console.log(error)
+        }   
+    }
 
     const weeks = useMemo(() => {
         const start = moment(start).add(week, 'weeks').startOf('week');
@@ -65,6 +66,8 @@ export default function CheckIn() {
         } catch (e) {
             console.log(e)
         }
+
+        getAttendance()
     }
 
     return (
