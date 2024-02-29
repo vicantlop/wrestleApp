@@ -17,12 +17,9 @@ export default function Register() {
     const nav = useNavigation()
 
     const Register = async () => {
-        console.log(email, password)
         createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
             const user = userCredential.user;
-            console.log(user.uid)
             if (user) {
-                console.log(firstName)
                 try {
                     await setDoc(doc(db, 'users', user.uid), {
                         firstName: firstName,

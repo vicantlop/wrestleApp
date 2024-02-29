@@ -1,17 +1,35 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Dimensions, TouchableOpacity } from "react-native";
 import moment from "moment";
 import Swiper from 'react-native-swiper'
+import { auth, db } from "../../firebase-config";
+import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { useSelector } from "react-redux";
 
-const { width } = Dimensions.get('screen')
+const { width, height } = Dimensions.get('screen')
 
 export default function CheckIn() {
     const swiper = useRef();
     const [value, setValue] = useState(new Date())
     const [week, setWeek] = useState(0)
+    const user = useSelector((state) => state.user)
+    const [attendance, setAttendance] = useState({})
+
+    useEffect(() => {
+        const getAttendance = async () => {
+            try {
+                const docSnap = await getDoc(doc(db, 'attendance', user.uid))
+                setAttendance(docSnap.data())
+            } catch (error) {
+                console.log(error)
+            }   
+        }
+        getAttendance()
+    }, [])
 
     const weeks = useMemo(() => {
         const start = moment(start).add(week, 'weeks').startOf('week');
+
 
         return [-1, 0, 1].map(adj => {
             return Array.from({ length: 7 }).map((_, index) => {
@@ -25,7 +43,29 @@ export default function CheckIn() {
         })
     }, [week])
 
+
     const { container, header, title, picker, itemRow, itemWeekday, itemDate, contentText, placeholder, placeholderContent, footer, btn, btnText } = styles
+
+    const markPresent = async () => {
+        const day = moment(value).startOf('day').toDate();
+        const date = day.toDateString();
+
+        try {
+            const docRef = doc(db, 'attendance', user.uid)
+            const docSnap = await getDoc(docRef)
+            if(docSnap.exists()) {
+                await updateDoc(docRef, {
+                    ...docSnap.data(), [date]: 'present'
+                })
+            } else {
+                await setDoc(doc(db, 'attendance', user.uid), {
+                    [date]: 'present'
+                })
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -37,7 +77,7 @@ export default function CheckIn() {
                     <Swiper
                         index={1} ref={swiper} showsPagination={false} loop={false} onIndexChanged={ind => {
                             if (ind === 1) {
-                                return 
+                                return
                             }
 
                             setTimeout(() => {
@@ -53,12 +93,16 @@ export default function CheckIn() {
                             <View key={index} style={itemRow}>
                                 {dates.map((item, dateIndex) => {
                                     const isActive = value.toDateString() === item.date.toDateString()
+                                    const isPresent = attendance[item.date.toDateString()]
 
                                     return (
                                         <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue(item.date)}>
                                             <View style={[styles.item, isActive && {
                                                 backgroundColor: '#111',
                                                 borderColor: '#111',
+                                            }, isPresent && {
+                                                backgroundColor: 'green',
+                                                borderColor: 'green'
                                             }]}>
                                                 <Text style={[itemWeekday, isActive && { color: '#fff' }]}>{item.weekday}</Text>
                                                 <Text style={[itemDate, isActive && { color: '#fff' }]}>{item.date.getDate()}</Text>
@@ -71,7 +115,7 @@ export default function CheckIn() {
                     </Swiper>
                 </View>
 
-                <View style={{flex: 1, paddingVertical: 24, paddingHorizontal: 16}}>
+                <View style={{ flex: 1, paddingVertical: 24, paddingHorizontal: 16 }}>
                     <Text style={contentText}>
                         {value.toDateString()}
                     </Text>
@@ -83,7 +127,7 @@ export default function CheckIn() {
                     </View>
 
                     <View style={footer}>
-                        <TouchableOpacity style={btn} >
+                        <TouchableOpacity style={btn} onPress={markPresent}>
                             <Text style={btnText}>Check In</Text>
                         </TouchableOpacity>
                     </View>

@@ -4,6 +4,8 @@ import { SafeAreaView, StyleSheet, Text, TextInput, View, Pressable, Keyboard } 
 import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase-config'
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
@@ -14,6 +16,7 @@ export default function Login() {
     const { container, loginTextField, contentView, titleContainer, titleText, mainContent, button, text } = styles;
 
     const nav = useNavigation()
+    const dispatch = useDispatch();
 
     // useEffect(() => {
     //     onAuthStateChanged(auth, (user) => {
@@ -27,6 +30,7 @@ export default function Login() {
     const Login = async() => {
         signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
             const user = userCredential.user;
+            dispatch(setUser(user.uid))
             // storeData()
             if(user) {
                 nav.push('Main')
