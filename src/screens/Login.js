@@ -33,7 +33,7 @@ export default function Login() {
             dispatch(setUser(user.uid))
             // storeData()
             if(user) {
-                nav.push('Main')
+                nav.replace('Main')
             }
         }).catch((error) => {
             const errorCode = error.code;

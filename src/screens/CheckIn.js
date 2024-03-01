@@ -5,6 +5,7 @@ import Swiper from 'react-native-swiper'
 import { auth, db } from "../../firebase-config";
 import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useSelector } from "react-redux";
+import Loading from "./Loading";
 
 const { width, height } = Dimensions.get('screen')
 
@@ -14,6 +15,7 @@ export default function CheckIn() {
     const [week, setWeek] = useState(0)
     const user = useSelector((state) => state.user)
     const [attendance, setAttendance] = useState({})
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         getAttendance()
@@ -23,6 +25,7 @@ export default function CheckIn() {
         try {
             const docSnap = await getDoc(doc(db, 'attendance', user.uid))
             setAttendance(docSnap.data())
+            setLoading(false)
         } catch (error) {
             console.log(error)
         }   
@@ -71,6 +74,10 @@ export default function CheckIn() {
     }
 
     return (
+        loading ? 
+        (
+            <Loading></Loading>
+        ) :
         <SafeAreaView style={{ flex: 1 }}>
             <View style={container}>
                 <View style={header}>

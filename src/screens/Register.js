@@ -29,7 +29,7 @@ export default function Register() {
                 } catch (e) {
                     console.log(e)
                 }
-                nav.push('Main')
+                nav.replace('Main')
             }
         }).catch((error) => {
             const errorCode = error.code;

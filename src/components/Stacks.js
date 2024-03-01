@@ -32,6 +32,7 @@ export default function Stacks() {
           options={
             {
               headerShown: false,
+              detachPreviousScreen: true,
             }
           }
         />
