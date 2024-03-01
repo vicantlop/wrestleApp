@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     itemWeekday: {
         fontSize: 13,
         fontWeight: '500',
-        color: '#737373',
+        color: '#111',
         marginBottom: 4,
     },
     itemDate: {
