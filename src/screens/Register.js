@@ -40,7 +40,7 @@ export default function Register() {
     }
 
     const toLogin = () => {
-        nav.push('Login')
+        nav.replace('Login')
     }
 
     return (

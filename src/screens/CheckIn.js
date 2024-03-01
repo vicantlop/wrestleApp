@@ -10,12 +10,16 @@ import Loading from "./Loading";
 const { width, height } = Dimensions.get('screen')
 
 export default function CheckIn() {
+    // const newDate = new Date()
+    const today = moment(new Date()).startOf('day').toDate();
     const swiper = useRef();
-    const [value, setValue] = useState(new Date())
+    const [value, setValue] = useState(today)
     const [week, setWeek] = useState(0)
     const user = useSelector((state) => state.user)
     const [attendance, setAttendance] = useState({})
     const [loading, setLoading] = useState(true)
+
+    const isToday = today.toDateString() === value.toDateString()
 
     useEffect(() => {
         getAttendance()
@@ -24,7 +28,9 @@ export default function CheckIn() {
     const getAttendance = async () => {
         try {
             const docSnap = await getDoc(doc(db, 'attendance', user.uid))
-            setAttendance(docSnap.data())
+            if(docSnap.exists()) {
+                setAttendance(docSnap.data())
+            }
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -51,26 +57,26 @@ export default function CheckIn() {
     const { container, header, title, picker, itemRow, itemWeekday, itemDate, contentText, placeholder, placeholderContent, footer, btn, btnText } = styles
 
     const markPresent = async () => {
-        const day = moment(value).startOf('day').toDate();
-        const date = day.toDateString();
-
-        try {
-            const docRef = doc(db, 'attendance', user.uid)
-            const docSnap = await getDoc(docRef)
-            if(docSnap.exists()) {
-                await updateDoc(docRef, {
-                    ...docSnap.data(), [date]: 'present'
-                })
-            } else {
-                await setDoc(doc(db, 'attendance', user.uid), {
-                    [date]: 'present'
-                })
+            const day = moment(value).startOf('day').toDate();
+            const date = day.toDateString();
+    
+            try {
+                const docRef = doc(db, 'attendance', user.uid)
+                const docSnap = await getDoc(docRef)
+                if(docSnap.exists()) {
+                    await updateDoc(docRef, {
+                        ...docSnap.data(), [date]: 'present'
+                    })
+                } else {
+                    await setDoc(doc(db, 'attendance', user.uid), {
+                        [date]: 'present'
+                    })
+                }
+            } catch (e) {
+                console.log(e)
             }
-        } catch (e) {
-            console.log(e)
-        }
-
-        getAttendance()
+    
+            getAttendance()
     }
 
     return (
@@ -137,9 +143,19 @@ export default function CheckIn() {
                     </View>
 
                     <View style={footer}>
-                        <TouchableOpacity style={btn} onPress={markPresent}>
-                            <Text style={btnText}>Check In</Text>
-                        </TouchableOpacity>
+                        {isToday ? (
+                            <TouchableOpacity style={btn}  onPress={markPresent}>
+                                <Text style={btnText}>Check In</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity style={[btn, !isToday && {
+                                backgroundColor: 'lightgrey',
+                                borderColor: 'lightgrey',
+                            }]} activeOpacity={1}>
+                                <Text style={btnText}>Check In</Text>
+                            </TouchableOpacity>
+                        )}
+                        
                     </View>
                 </View>
             </View>
