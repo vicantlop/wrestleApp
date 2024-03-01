@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
         borderRadius: 4,
         elevation: 3,
-        backgroundColor: 'green'
+        backgroundColor: 'green',
+        marginTop: 10,
     },
     text: {
         fontSize: 16,
